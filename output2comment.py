@@ -42,23 +42,67 @@ def nbgen(infilename, outfilename):
                 ##
                 ## parte en lineas la salida
                 ##
-                if nb.cells[i].outputs[0]['output_type'] == 'stream':
-                    output = nb.cells[i].outputs[0]['text'].splitlines()
-                elif nb.cells[i].outputs[0]['output_type'] == 'display_data':
-                    output = nb.cells[i].outputs[0]['data']['text/plain'].splitlines()
-                ##
-                ## comenta cada linea de la salida
-                ##
-                output = ['## ' + line for line in output]
-                output = ['\n##'] + output + ['##']
+                if 'text' in nb.cells[i].outputs[0].keys():
+
+                    ##
+                    ## obtiene la salida
+                    ##
+                    output = nb.cells[i].outputs[0]['text']
+
+                    ##
+                    ## comenta cada linea de la salida
+                    ##
+                    output = output.replace('\n', '\n## ')
+                    output = '\n\n## ' + output
+                    if len(nb.cells[i].source) != 0:
+                        nb.cells[i].source += ''.join(output)
+                    else:
+                        nb.cells[i].source = ''.join(output)
+
+                elif 'data' in nb.cells[i].outputs[0].keys():
+                    if 'text/plain' in nb.cells[i].outputs[0]['data'].keys():
+
+                        ##
+                        ## obtiene la salida
+                        ##
+                        output = nb.cells[i].outputs[0]['data']['text/plain']
+
+                        ##
+                        ## comenta cada linea de la salida
+                        ##
+                        output = output.replace('\n', '\n## ')
+                        output = '\n\n## ' + output
+                        if len(nb.cells[i].source) != 0:
+                            nb.cells[i].source += ''.join(output)
+                        else:
+                            nb.cells[i].source = ''.join(output)
+
+                    else:
+                        if len(nb.cells[i].source) != 0:
+                            nb.cells[i].source += '\n\n## plot without title'
+                        else:
+                            nb.cells[i].source = '## plot without title'
+
+
+                #if 'data' in nb.cells[i].outputs[0].keys():
+                #    if 'text/plain' in nb.cells[i].outputs[0].data.keys():
+                #        output = nb.cells[i].outputs[0]['data']['text/plain']
+
 
                 ##
                 ## agrega la salida al codigo
                 ##
-                if len(nb.cells[i].source) != 0:
-                    nb.cells[i].source += '\n'.join(output)
-                else:
-                    nb.cells[i].source = '\n'.join(output)
+                    #print(type(nb.cells[i].source))
+                # if len(nb.cells[i].source) != 0:
+                #    # nb.cells[i].source += '\n'.join(output)
+                #    if isinstance(output, str):
+                #        nb.cells[i].source += '\n'.join(output)
+                #    else:
+                #        nb.cells[i].source += '\n'.join(output)
+                #
+                #else:
+                #    nb.cells[i].source = output
+                #    # nb.cells[i].source = '\n'.join(output)
 
     nbformat.write(nb, outfilename)
 
