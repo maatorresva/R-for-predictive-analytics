@@ -7,4 +7,6 @@ Medellín, Colombia
 
 [Licencia](https://github.com/jdvelasq/R-for-predictive-analytics/blob/master/LICENSE)
 
+**Bibliografía**
 
+*
